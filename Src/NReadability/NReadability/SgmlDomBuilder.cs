@@ -98,7 +98,8 @@ namespace NReadability
         sgmlReader.DocType = "HTML";
         sgmlReader.WhitespaceHandling = WhitespaceHandling.None;
 
-        using (var sr = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(htmlContent))))
+        string xmlContent = StripInvalidXmlCharacters(htmlContent);
+        using (var sr = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(xmlContent))))
         {
           sgmlReader.InputStream = sr;
 
@@ -107,6 +108,24 @@ namespace NReadability
           return document;
         }
       }
+    }
+
+    private static string StripInvalidXmlCharacters(string textIn)
+    {
+        var builder = new StringBuilder();
+        if (string.IsNullOrEmpty(textIn))
+        {
+            return string.Empty;
+        }
+        for (int i = 0; i < textIn.Length; i++)
+        {
+            char ch = textIn[i];
+            if (((((ch == '\t') || (ch == '\n')) || (ch == '\r')) || ((ch >= ' ') && (ch <= 0xd7ff))) || ((ch >= 0xe000) && (ch <= 0xfffd)))
+            {
+                builder.Append(ch);
+            }
+        }
+        return builder.ToString();
     }
 
     #endregion

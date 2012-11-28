@@ -298,6 +298,21 @@ namespace NReadability
         .Where(e => e.Name != null && tagName.Equals(e.Name.LocalName, StringComparison.OrdinalIgnoreCase));
     }
 
+    public static IEnumerable<XElement> GetElementsByClass(this XContainer container, string className)
+    {
+        if (container == null)
+        {
+            throw new ArgumentNullException("container");
+        }
+        if (string.IsNullOrEmpty(className))
+        {
+            throw new ArgumentNullException("className");
+        }
+        return (from e in container.Descendants()
+                where (e.Attribute("class") != null) && e.Attribute("class").Value.Equals(className, StringComparison.OrdinalIgnoreCase)
+                select e);
+    }
+
     #endregion
   }
 }

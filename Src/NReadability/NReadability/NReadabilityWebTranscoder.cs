@@ -217,7 +217,7 @@ namespace NReadability
       if (_curPageNum > _MaxPages) 
       {
         url = "<div style='text-align: center'><a href='" + url + "'>View Next Page</a></div>";
-        contentDiv.Add(XDocument.Parse(url));
+        contentDiv.Add(XDocument.Parse(url).Root);
         return;
       }
 

@@ -137,6 +137,8 @@ namespace NReadability
       new Dictionary<Regex, string>
         {
           { new Regex("^https?://(www|mobile)\\.theverge.com", RegexOptions.Compiled | RegexOptions.IgnoreCase), "article" },
+          { new Regex(@"^https?://(www\.)?ehow.com", RegexOptions.Compiled | RegexOptions.IgnoreCase), "article" },
+          { new Regex(@"^https?://(www\.)?pbs.org", RegexOptions.Compiled | RegexOptions.IgnoreCase), ".entry-content" },
         };
 
     #endregion
@@ -1738,9 +1740,10 @@ namespace NReadability
         throw new ArgumentException("Argument can't be null nor empty.", "articleContentElementHint");
       }
 
-      return document
-        .GetElementsByTagName(articleContentElementHint)
-        .FirstOrDefault();
+      return (articleContentElementHint.StartsWith(".")
+                ? document.GetElementsByClass(articleContentElementHint.TrimStart(new char[] { '.' }))
+                : document.GetElementsByTagName(articleContentElementHint)
+             ).FirstOrDefault();
     }
 
     private static string GetArticleContentElementHint(string url)
