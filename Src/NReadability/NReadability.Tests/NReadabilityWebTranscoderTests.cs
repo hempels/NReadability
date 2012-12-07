@@ -122,13 +122,20 @@ namespace NReadability.Tests
                 @"http://www.ilr.cornell.edu/trianglefire/story/investigationTrial.html",
               }
             },
+          {
+            11,
+            new[]
+              {
+                @"http://www.goinggreentoday.com/blog/how-coffee-aids-in-deforestation-of-our-rainforests/",
+              }
+            },
         };
 
     #endregion
 
     [Test]
     [Sequential]
-    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)]int sampleInputNumber)
+    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)]int sampleInputNumber)
     {
       const string outputDir = "SampleWebOutput";
 
@@ -157,6 +164,9 @@ namespace NReadability.Tests
         Path.Combine(outputDir, string.Format("SampleOutput_{0}.html", sampleInputNumberStr)),
         extractedContent,
         Encoding.UTF8);
+
+      Assert.IsTrue(extractedContent.IndexOf("<html") == extractedContent.LastIndexOf("<html"));
+      Assert.IsTrue(extractedContent.IndexOf("</html") == extractedContent.LastIndexOf("</html"));
 
       switch (sampleInputNumber)
       {
@@ -246,6 +256,11 @@ namespace NReadability.Tests
           // page 3 (last)
           Assert.IsTrue(extractedContent.Contains("mmediately after the fire, Triangle owners Blanck and Harris"));
           Assert.IsTrue(extractedContent.Contains("and that it was \"second to none in the country.\""));
+          break;
+
+        case 11:
+          Assert.IsTrue(extractedContent.Contains("More than 20 percent of the world’s oxygen comes from the Amazon Rainforest."));
+          Assert.IsTrue(extractedContent.Contains("practical ways to shrink the size of your step."));
           break;
 
         default:

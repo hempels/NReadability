@@ -55,7 +55,6 @@ namespace NReadability
       // "trim end" htmlContent to ...</html>$ (codinghorror.com puts some scripts after the </html> - sic!)
       const string htmlEnd = "</html";
       int indexOfHtmlEnd = htmlContent.LastIndexOf(htmlEnd);
-
       if (indexOfHtmlEnd != -1)
       {
         int indexOfHtmlEndBracket = htmlContent.IndexOf('>', indexOfHtmlEnd);
@@ -64,6 +63,14 @@ namespace NReadability
         {
           htmlContent = htmlContent.Substring(0, indexOfHtmlEndBracket + 1);
         }
+      }
+
+      // "trim start" htmlContent to ...^<html (some sites put scripts before the <html>..)
+      const string htmlStart = "<html";
+      int indexOfHtmlStart = htmlContent.LastIndexOf(htmlStart);
+      if (indexOfHtmlStart != -1)
+      {
+        htmlContent = htmlContent.Substring(indexOfHtmlStart);
       }
 
       XDocument document;
