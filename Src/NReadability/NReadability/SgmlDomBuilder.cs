@@ -67,11 +67,15 @@ namespace NReadability
 
       // "trim start" htmlContent to ...^<html (some sites put scripts before the <html>..)
       const string htmlStart = "<html";
-      int indexOfHtmlStart = htmlContent.LastIndexOf(htmlStart);
+      int indexOfHtmlStart = htmlContent.IndexOf(htmlStart);
       if (indexOfHtmlStart != -1)
       {
         htmlContent = htmlContent.Substring(indexOfHtmlStart);
       }
+
+      // remove any *extra* </body> or </html> tags
+      htmlContent = HtmlUtils.RemoveExcessTags(htmlContent, "html");
+      htmlContent = HtmlUtils.RemoveExcessTags(htmlContent, "body");
 
       XDocument document;
 
@@ -90,8 +94,22 @@ namespace NReadability
         }
 
         htmlContent = HtmlUtils.RemoveScriptTags(htmlContent);
+        try
+        {
+          document = LoadDocument(htmlContent);
+        }
+        catch (InvalidOperationException exc2)
+        {
+          // if removing the script tags wasn't enough, we can retry with the
+          // <style> tags also stripped off
+          if (!exc2.Message.Contains("EndOfFile"))
+          {
+            throw;
+          }
 
-        document = LoadDocument(htmlContent);
+          htmlContent = HtmlUtils.RemoveStyleTags(htmlContent);
+          document = LoadDocument(htmlContent);
+        }
       }
 
       return document;
