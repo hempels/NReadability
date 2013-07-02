@@ -101,8 +101,8 @@ namespace NReadability
     #region Algorithm regular expressions
 
     private static readonly Regex _UnlikelyCandidatesRegex = new Regex("combx|comment|community|disqus|extra|foot|header|menu|remark|rss|shoutbox|sidebar|side|sponsor|ad-break|agegate|pagination|pager|popup|tweet|twitter", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex _OkMaybeItsACandidateRegex = new Regex("and|article|body|column|main|shadow", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex _PositiveWeightRegex = new Regex("article|body|content|entry|hentry|main|page|pagination|post|text|blog|story", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex _OkMaybeItsACandidateRegex = new Regex("and|article|body|column|main|shadow|copy|page", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex _PositiveWeightRegex = new Regex("article|body|content|entry|hentry|main|page|pagination|post|text|blog|story|copy", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex _NegativeWeightRegex = new Regex("combx|comment|com-|contact|foot|footer|footnote|masthead|media|meta|outbrain|promo|related|scroll|shoutbox|sidebar|side|sponsor|shopping|tags|tool|widget", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex _NegativeLinkParentRegex = new Regex("(stories|articles|news|documents|posts|notes|series|historie|artykuly|artykuły|wpisy|dokumenty|serie|geschichten|erzählungen|erzahlungen)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex _Extraneous = new Regex("print|archive|comment|discuss|e[-]?mail|share|reply|all|login|sign|single|also", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -358,8 +358,15 @@ namespace NReadability
       }
 
       nextPageUrl = null;
+      bool excludeSiteFromPaging = false;
 
-      if (!string.IsNullOrEmpty(url))
+      /* Tumblr themes have a nasty tendency to act like each post is a page in a book */
+      if (!string.IsNullOrEmpty(url) && url.IndexOf("tumblr.com", StringComparison.OrdinalIgnoreCase) >= 0)
+        excludeSiteFromPaging = true;
+      else if (document.GetElementsByTagName("meta").Any(xe => xe.Attribute("content") != null && xe.Attribute("content").Value.Equals("tumblr", StringComparison.OrdinalIgnoreCase)))
+        excludeSiteFromPaging = true;
+
+      if (!excludeSiteFromPaging && !string.IsNullOrEmpty(url))
       {
         nextPageUrl = FindNextPageLink(document.GetBody(), url);
       }

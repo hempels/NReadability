@@ -129,13 +129,21 @@ namespace NReadability.Tests
                 @"http://www.goinggreentoday.com/blog/how-coffee-aids-in-deforestation-of-our-rainforests/",
               }
             },
+          {
+            12,
+            new[]
+              {
+                @"http://www.itsokaytobesmart.com/post/51600522137/rebloggable-by-request-this-one-first-of-all",
+                @"http://www.itsokaytobesmart.com/post/51593328186", // false positive for paging
+              }
+            },
         };
 
     #endregion
 
     [Test]
     [Sequential]
-    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)]int sampleInputNumber)
+    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)]int sampleInputNumber)
     {
       const string outputDir = "SampleWebOutput";
 
@@ -261,6 +269,13 @@ namespace NReadability.Tests
         case 11:
           Assert.IsTrue(extractedContent.Contains("More than 20 percent of the world’s oxygen comes from the Amazon Rainforest."));
           Assert.IsTrue(extractedContent.Contains("practical ways to shrink the size of your step."));
+          break;
+
+        case 12:
+          // Actual tumblr post
+          Assert.IsTrue(extractedContent.Contains("First of all, you should watch this video."));
+          // Next tumlbr post, linked from first - should not be included
+          Assert.IsFalse(extractedContent.Contains("I’ll let Neil deGrasse Tyson set this up"));
           break;
 
         default:
