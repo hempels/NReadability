@@ -137,13 +137,20 @@ namespace NReadability.Tests
                 @"http://www.itsokaytobesmart.com/post/51593328186", // false positive for paging
               }
             },
+          {
+            13,
+            new[]
+              {
+                @"http://techcrunch.com/2013/07/03/engrade-lands-5m-from-javelin-samsung-and-others-to-help-schools-unify-learning-data-systems-in-one-platform/",
+              }
+            },
         };
 
     #endregion
 
     [Test]
     [Sequential]
-    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)]int sampleInputNumber)
+    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)]int sampleInputNumber)
     {
       const string outputDir = "SampleWebOutput";
 
@@ -276,6 +283,10 @@ namespace NReadability.Tests
           Assert.IsTrue(extractedContent.Contains("First of all, you should watch this video."));
           // Next tumlbr post, linked from first - should not be included
           Assert.IsFalse(extractedContent.Contains("I’ll let Neil deGrasse Tyson set this up"));
+          break;
+
+        case 13:
+          Assert.IsTrue(extractedContent.Contains("Back in 2003"));
           break;
 
         default:

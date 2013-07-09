@@ -70,31 +70,5 @@ namespace NReadability
       return RemoveStyleTags(strippedHtmlContent);
     }
 
-    internal static string RemoveExcessTags(string htmlContent, string tagName)
-    {
-      int firstIndexOfStartTag = htmlContent.IndexOf("<" + tagName);
-      int lastIndexOfStartTag = htmlContent.LastIndexOf("<" + tagName);
-      while (lastIndexOfStartTag > firstIndexOfStartTag)
-      {
-        int tagEnd = htmlContent.IndexOf(">", lastIndexOfStartTag);
-        htmlContent = htmlContent.Remove(lastIndexOfStartTag, (tagEnd - lastIndexOfStartTag));
-
-        firstIndexOfStartTag = htmlContent.IndexOf("<" + tagName);
-        lastIndexOfStartTag = htmlContent.LastIndexOf("<" + tagName);
-      }
-
-      int lastIndexOfEndTag = htmlContent.LastIndexOf("</" + tagName + ">");
-      int firstIndexOfEndTag = htmlContent.IndexOf("</" + tagName + ">");
-      while (firstIndexOfEndTag < lastIndexOfEndTag)
-      {
-        htmlContent = htmlContent.Remove(firstIndexOfEndTag, ("</" + tagName + ">").Length);
-
-        lastIndexOfEndTag = htmlContent.LastIndexOf("</" + tagName + ">");
-        firstIndexOfEndTag = htmlContent.IndexOf("</" + tagName + ">");
-      }
-
-      return htmlContent;
-    }
-
   }
 }

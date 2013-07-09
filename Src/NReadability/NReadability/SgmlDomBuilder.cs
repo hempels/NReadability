@@ -21,6 +21,7 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Sgml;
@@ -73,10 +74,6 @@ namespace NReadability
         htmlContent = htmlContent.Substring(indexOfHtmlStart);
       }
 
-      // remove any *extra* </body> or </html> tags
-      htmlContent = HtmlUtils.RemoveExcessTags(htmlContent, "html");
-      htmlContent = HtmlUtils.RemoveExcessTags(htmlContent, "body");
-
       XDocument document;
 
       try
@@ -111,6 +108,25 @@ namespace NReadability
           document = LoadDocument(htmlContent);
         }
       }
+
+      // remove any *extra* <body> or <html> tags
+      Action<XDocument, string> fnRemoveExtra = (doc, tagName) =>
+      {
+        var bodyElements = doc.GetElementsByTagName(tagName);
+        if (bodyElements != null && bodyElements.Count() > 1)
+        {
+          // Skip the first (top-most) match, then reverse the list so they're processed bottom-up
+          foreach (var bodyElem in bodyElements.Skip(1).Reverse())
+          {
+            // Push any child nodes up a level, then delete the body element
+            var children = bodyElem.Descendants();
+            bodyElem.AddAfterSelf(children.ToArray());
+            bodyElem.Remove();
+          }
+        }
+      };
+      fnRemoveExtra(document, "html");
+      fnRemoveExtra(document, "body");
 
       return document;
     }
