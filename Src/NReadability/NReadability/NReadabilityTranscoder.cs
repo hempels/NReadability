@@ -103,7 +103,7 @@ namespace NReadability
     private static readonly Regex _UnlikelyCandidatesRegex = new Regex("combx|comment|community|disqus|extra|foot|header|menu|remark|rss|shoutbox|sidebar|side|sponsor|ad-break|agegate|pagination|pager|popup|tweet|twitter", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex _OkMaybeItsACandidateRegex = new Regex("and|article|body|column|main|shadow|copy|page", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex _PositiveWeightRegex = new Regex("article|body|content|entry|hentry|main|page|pagination|post|text|blog|story|copy", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex _NegativeWeightRegex = new Regex("combx|comment|com-|contact|foot|footer|footnote|masthead|media|meta|outbrain|promo|related|scroll|shoutbox|sidebar|side|sponsor|shopping|tags|tool|widget", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex _NegativeWeightRegex = new Regex("combx|comment|com-|contact|foot|footer|footnote|masthead|media|meta|outbrain|promo|related|scroll|shoutbox|sidebar|side|sponsor|shopping|tags|tool|widget|caption|enlarge|credit|rights|notice", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex _NegativeLinkParentRegex = new Regex("(stories|articles|news|documents|posts|notes|series|historie|artykuly|artykuły|wpisy|dokumenty|serie|geschichten|erzählungen|erzahlungen)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex _Extraneous = new Regex("print|archive|comment|discuss|e[-]?mail|share|reply|all|login|sign|single|also", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex _DivToPElementsRegex = new Regex("<(a|blockquote|dl|div|img|ol|p|pre|table|ul)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -1235,6 +1235,7 @@ namespace NReadability
       /* Do these last as the previous stuff may have removed junk that will affect these. */
       CleanConditionally(articleContentElement, "table");
       CleanConditionally(articleContentElement, "ul");
+      CleanConditionally(articleContentElement, "span");
       CleanConditionally(articleContentElement, "div");
 
       /* Remove extra paragraphs. */
@@ -1270,6 +1271,7 @@ namespace NReadability
     {
       string elementInnerText = GetInnerText(element);
       int elementInnerTextLength = elementInnerText.Length;
+      elementInnerTextLength += element.GetElementsByTagName("img").Count();
 
       if (elementInnerTextLength == 0)
       {
@@ -1448,6 +1450,7 @@ namespace NReadability
         if (GetSegmentsCount(elementInnerText, ',') < _MinCommaSegments)
         {
           int psCount = element.GetElementsByTagName("p").Count();
+          int blocksCount = element.GetElementsByTagName("p").Count() + element.GetElementsByTagName("div").Count();
           int imgsCount = element.GetElementsByTagName("img").Count();
           int lisCount = element.GetElementsByTagName("li").Count();
           int inputsCount = element.GetElementsByTagName("input").Count();
@@ -1460,7 +1463,7 @@ namespace NReadability
           float linksDensity = GetLinksDensity(element);
           int innerTextLength = elementInnerText.Length;
           string elementNameLower = elementName.Trim().ToLower();
-          bool remove = (imgsCount > psCount)
+          bool remove = (imgsCount != 1 && (imgsCount > blocksCount))
                      || (lisCount - _LisCountTreshold > psCount && elementNameLower != "ul" && elementNameLower != "ol")
                      || (inputsCount > psCount / 3)
                      || (innerTextLength < _MinInnerTextLength && (imgsCount == 0 || imgsCount > _MaxImagesInShortSegmentsCount))

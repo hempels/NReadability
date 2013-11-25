@@ -144,13 +144,20 @@ namespace NReadability.Tests
                 @"http://techcrunch.com/2013/07/03/engrade-lands-5m-from-javelin-samsung-and-others-to-help-schools-unify-learning-data-systems-in-one-platform/",
               }
             },
+          {
+            14,
+            new[]
+              {
+                @"http://www.npr.org/blogs/health/2013/11/12/244588448/who-rates-typhoons-medical-challenges-monumental",
+              }
+            },
         };
 
     #endregion
 
     [Test]
     [Sequential]
-    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)]int sampleInputNumber)
+    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)]int sampleInputNumber)
     {
       const string outputDir = "SampleWebOutput";
 
@@ -246,7 +253,7 @@ namespace NReadability.Tests
 
         case 8:
           // page 1
-          Assert.IsTrue(extractedContent.Contains("For the last couple of days we’ve been asking people"));
+          Assert.IsTrue(extractedContent.Contains("For the last couple of days we've been asking people"));
           Assert.IsTrue(extractedContent.Contains("list your favorite tools for slowing down feeds in the comments"));
           // "page" 2 (false positive)
           Assert.IsFalse(extractedContent.Contains("signature fake news programs"));
@@ -287,6 +294,10 @@ namespace NReadability.Tests
 
         case 13:
           Assert.IsTrue(extractedContent.Contains("Back in 2003"));
+          break;
+
+        case 14:
+          Assert.IsFalse(extractedContent.Contains("</body><a"), "Content found after </body>");
           break;
 
         default:

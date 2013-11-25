@@ -74,6 +74,10 @@ namespace NReadability
         htmlContent = htmlContent.Substring(indexOfHtmlStart);
       }
 
+      // Remove all conditional comments (SgmlDomBuilder doesn't understand them correctly)
+      htmlContent = Regex.Replace(htmlContent, @"<!--\s*\[if .*?\]\s*>.*?<!\s*\[endif\]\s*-->", string.Empty);
+      htmlContent = Regex.Replace(htmlContent, @"(<!--\s*\[if .*?\]\s*>)|(<!\s*\[endif\]\s*-->)", string.Empty);
+
       XDocument document;
 
       try

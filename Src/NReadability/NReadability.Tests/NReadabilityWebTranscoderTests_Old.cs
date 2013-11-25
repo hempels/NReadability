@@ -176,7 +176,7 @@ namespace NReadability.Tests
 
         case 8:
           // page 1
-          Assert.IsTrue(transcodedContent.Contains("For the last couple of days we’ve been asking people"));
+          Assert.IsTrue(transcodedContent.Contains("For the last couple of days we've been asking people"));
           Assert.IsTrue(transcodedContent.Contains("list your favorite tools for slowing down feeds in the comments"));
           // "page" 2 (false positive)
           Assert.IsFalse(transcodedContent.Contains("signature fake news programs"));
