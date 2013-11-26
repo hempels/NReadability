@@ -53,6 +53,13 @@ namespace NReadability
         return new XDocument();
       }
 
+      // Remove all conditional comments (SgmlDomBuilder doesn't understand them correctly)
+      htmlContent = Regex.Replace(htmlContent, @"<!--\s*\[if .*?\]\s*>.*?<!\s*\[endif\]\s*-->", string.Empty, RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+      htmlContent = Regex.Replace(htmlContent, @"<!--\s*\[if .*?\]\s*>\s*(-->)?", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+      htmlContent = Regex.Replace(htmlContent, @"(<!--)?\s*<!\s*\[endif\]\s*-->", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+      // remove malformed conditionals
+      htmlContent = Regex.Replace(htmlContent, @"<!--\s*\[if .*?>\s*-->", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
       // "trim end" htmlContent to ...</html>$ (codinghorror.com puts some scripts after the </html> - sic!)
       const string htmlEnd = "</html";
       int indexOfHtmlEnd = htmlContent.LastIndexOf(htmlEnd);
@@ -73,10 +80,6 @@ namespace NReadability
       {
         htmlContent = htmlContent.Substring(indexOfHtmlStart);
       }
-
-      // Remove all conditional comments (SgmlDomBuilder doesn't understand them correctly)
-      htmlContent = Regex.Replace(htmlContent, @"<!--\s*\[if .*?\]\s*>.*?<!\s*\[endif\]\s*-->", string.Empty);
-      htmlContent = Regex.Replace(htmlContent, @"(<!--\s*\[if .*?\]\s*>)|(<!\s*\[endif\]\s*-->)", string.Empty);
 
       XDocument document;
 

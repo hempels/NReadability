@@ -151,13 +151,20 @@ namespace NReadability.Tests
                 @"http://www.npr.org/blogs/health/2013/11/12/244588448/who-rates-typhoons-medical-challenges-monumental",
               }
             },
+          {
+            15,
+            new[]
+              {
+                @"http://www.purposefairy.com/5778/the-power-of-gratitude-why-gratitude-brings-happiness/",
+              }
+            },
         };
 
     #endregion
 
     [Test]
     [Sequential]
-    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)]int sampleInputNumber)
+    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)]int sampleInputNumber)
     {
       const string outputDir = "SampleWebOutput";
 
@@ -298,6 +305,10 @@ namespace NReadability.Tests
 
         case 14:
           Assert.IsFalse(extractedContent.Contains("</body><a"), "Content found after </body>");
+          break;
+
+        case 15:
+          Assert.IsFalse(extractedContent.Contains("</body><header>"), "Content found after </body>");
           break;
 
         default:
