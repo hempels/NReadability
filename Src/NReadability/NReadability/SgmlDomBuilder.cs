@@ -56,7 +56,7 @@ namespace NReadability
       // Remove all conditional comments (SgmlDomBuilder doesn't understand them correctly)
       htmlContent = Regex.Replace(htmlContent, @"<!--\s*\[if .*?\]\s*>.*?<!\s*\[endif\]\s*-->", string.Empty, RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
       htmlContent = Regex.Replace(htmlContent, @"<!--\s*\[if .*?\]\s*>\s*(-->)?", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-      htmlContent = Regex.Replace(htmlContent, @"(<!--)?\s*<!\s*\[endif\]\s*-->", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+      htmlContent = Regex.Replace(htmlContent, @"(<!--\s*)?<!\s*\[endif\]\s*-->", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
       // remove malformed conditionals
       htmlContent = Regex.Replace(htmlContent, @"<!--\s*\[if .*?>\s*-->", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 

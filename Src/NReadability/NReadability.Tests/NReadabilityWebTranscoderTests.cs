@@ -158,13 +158,21 @@ namespace NReadability.Tests
                 @"http://www.purposefairy.com/5778/the-power-of-gratitude-why-gratitude-brings-happiness/",
               }
             },
+          {
+            16,
+            new[]
+              {
+                @"http://teenink.com/opinion/all/article/10102/School-Uniforms/",
+                @"http://teenink.com/opinion/all/article/10102/School-Uniforms/?page=2", // false positive for paging
+              }
+            },
         };
 
     #endregion
 
     [Test]
     [Sequential]
-    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)]int sampleInputNumber)
+    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)]int sampleInputNumber)
     {
       const string outputDir = "SampleWebOutput";
 
@@ -309,6 +317,14 @@ namespace NReadability.Tests
 
         case 15:
           Assert.IsFalse(extractedContent.Contains("</body><header>"), "Content found after </body>");
+          break;
+
+        case 16:
+          string sample = "It's the first day of school";
+          int bodyStart = extractedContent.IndexOf("<body");
+          int firstPageStart = extractedContent.IndexOf(sample, bodyStart);
+          Assert.IsTrue(firstPageStart > -1);
+          Assert.AreEqual(-1, extractedContent.IndexOf(sample, firstPageStart + sample.Length), "Article body repeated due to comment paging");
           break;
 
         default:

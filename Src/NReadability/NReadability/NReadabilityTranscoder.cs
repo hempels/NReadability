@@ -533,7 +533,7 @@ namespace NReadability
           {
             if (!_PositiveWeightRegex.IsMatch(parentNodeClassAndId))
             {
-              linkObj.Score -= 25;
+              linkObj.Score -= 50;
               negativeNodeMatch = true;
             }
           }
