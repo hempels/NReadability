@@ -137,6 +137,8 @@
     <Content Include="SampleInput\SampleInput_12.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleWebInput\SampleInput_18_1.html" />
+    <Content Include="SampleWebInput\SampleInput_17_1.html" />
     <Content Include="SampleWebInput\SampleInput_16_2.html" />
     <Content Include="SampleWebInput\SampleInput_16_1.html" />
     <Content Include="SampleWebInput\SampleInput_15_1.html" />

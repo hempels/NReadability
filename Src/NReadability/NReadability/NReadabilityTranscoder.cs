@@ -74,7 +74,7 @@ namespace NReadability
     internal const string ReadabilityStyledCssClass = "readability-styled";
 
     private const int _MinParagraphLength = 25;
-    private const int _MinInnerTextLength = 25;
+    private const int _MinInnerTextLength = 20;
     private const int _ParagraphSegmentLength = 100;
     private const int _MaxPointsForSegmentsCount = 3;
     private const int _MinSiblingParagraphLength = 80;
@@ -1031,7 +1031,7 @@ namespace NReadability
         }
       }
 
-      IEnumerable<XElement> paraElements = document.GetElementsByTagName("p");
+      List<XElement> paraElements = document.GetElementsByTagName("p").ToList();
       var candidateElements = new HashSet<XElement>();
 
       _elementsScores.Clear();
@@ -1576,6 +1576,14 @@ namespace NReadability
         }
 
         documentBody = new XElement("body");
+        var bodychildren = htmlElement.Elements().Where(e => !string.Equals(e.Name.LocalName, "head", StringComparison.OrdinalIgnoreCase));
+        if (bodychildren.Count() > 0)
+        {
+          var working = new XElement[bodychildren.Count()];
+          bodychildren.ToArray().CopyTo(working, 0);
+          bodychildren.Remove();
+          documentBody.Add(working);
+        }
         htmlElement.Add(documentBody);
       }
 

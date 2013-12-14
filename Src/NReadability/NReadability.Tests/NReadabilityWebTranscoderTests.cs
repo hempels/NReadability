@@ -166,13 +166,27 @@ namespace NReadability.Tests
                 @"http://teenink.com/opinion/all/article/10102/School-Uniforms/?page=2", // false positive for paging
               }
             },
+          {
+            17,
+            new[]
+              {
+                @"http://www.bbc.co.uk/newsround/25263229",
+              }
+            },
+          {
+            18,
+            new[]
+              {
+                @"http://www.popularmechanics.com/home/how-to-plans/how-the-founding-fathers-made-their-beer-15627801",
+              }
+            },
         };
 
     #endregion
 
     [Test]
     [Sequential]
-    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)]int sampleInputNumber)
+    public void TestSampleInputs([Values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18)]int sampleInputNumber)
     {
       const string outputDir = "SampleWebOutput";
 
@@ -320,11 +334,28 @@ namespace NReadability.Tests
           break;
 
         case 16:
-          string sample = "It's the first day of school";
-          int bodyStart = extractedContent.IndexOf("<body");
-          int firstPageStart = extractedContent.IndexOf(sample, bodyStart);
-          Assert.IsTrue(firstPageStart > -1);
-          Assert.AreEqual(-1, extractedContent.IndexOf(sample, firstPageStart + sample.Length), "Article body repeated due to comment paging");
+          {
+            string sample = "It's the first day of school";
+            int bodyStart = extractedContent.IndexOf("<body");
+            int firstPageStart = extractedContent.IndexOf(sample, bodyStart);
+            Assert.IsTrue(firstPageStart > -1);
+            Assert.AreEqual(-1, extractedContent.IndexOf(sample, firstPageStart + sample.Length), "Article body repeated due to comment paging");
+          }
+          break;
+
+        case 17:
+          {
+            string sample = "everybody should be treated equally";
+            int firstPageStart = extractedContent.IndexOf(sample);
+            Assert.IsTrue(firstPageStart > -1);
+            Assert.AreEqual(-1, extractedContent.IndexOf(sample, firstPageStart + sample.Length), "Article body repeated due to conditional comment parsing");
+          }
+          break;
+
+        case 18:
+          {
+            Assert.IsTrue(extractedContent.Contains("When Ben Franklin wrote"), "Missing start of text");
+          }
           break;
 
         default:
