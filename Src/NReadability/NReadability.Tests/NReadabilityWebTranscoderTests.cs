@@ -383,6 +383,36 @@ namespace NReadability.Tests
       Assert.IsTrue(webTranscodingResult.TitleExtracted);
       Assert.AreEqual(expectedTitle, webTranscodingResult.ExtractedTitle);
     }
+
+    [Test]
+    public void UrlFetcher_follows_meta_refresh_full()
+    {
+        // arrange
+        const string expected = "http://www.newsweek.com/street-arts-new-class-war-272/street-arts-new-class-war-272?piano_d=1";
+        const string htmlContent = @"<html><head><meta http-equiv=""refresh"" content=""1;URL='" + expected + @"'""></head><body></body></html>";
+
+        // act
+        string actual = UrlFetcher.ParseMetaRedirect(null, htmlContent);
+
+        // assert
+        Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void UrlFetcher_follows_meta_refresh_relative()
+    {
+        // arrange
+        const string baseUri = "http://www.newsweek.com/street-arts-new-class-war-272";
+        const string expected = "http://www.newsweek.com/street-arts-new-class-war-272?piano_d=1";
+        const string htmlContent = @"<html><head><meta http-equiv=""refresh"" content=""1;URL='/street-arts-new-class-war-272?piano_d=1'""></head><body></body></html>";
+
+        // act
+        string actual = UrlFetcher.ParseMetaRedirect(new Uri(baseUri), htmlContent);
+
+        // assert
+        Assert.AreEqual(expected, actual);
+    }
+  
   }
 }
 

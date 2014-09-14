@@ -90,7 +90,31 @@ namespace NReadability
 
     public string Fetch(string url)
     {
-      return DownloadString(url);
+        string fetched = DownloadString(url);
+
+        string redirectUrl = ParseMetaRedirect(new Uri(url), fetched);
+        if (!string.IsNullOrEmpty(redirectUrl) && !string.Equals(url, redirectUrl, StringComparison.InvariantCultureIgnoreCase))
+            return Fetch(redirectUrl);
+
+        return fetched;
+    }
+
+    public static string ParseMetaRedirect(Uri baseUri, string html)
+    {
+        var match = Regex.Match(html, @"<meta\s+(http-equiv=['""]?refresh['""]?\s+content=[""']?\d+;\s*URL=['""]?(?<url>[a-zA-Z0-9:\-\._\?\,/\\\+&?%\$#\=~]+)['""]{1,2}|content=[""']?\d+;\s*URL=['""]?(?<url>[a-zA-Z0-9:\-\._\?\,/\\\+&?%\$#\=~]+)['""]{1,2}\s+http-equiv=['""]?refresh['""]?)[^>]*?>");
+        if (!match.Success || null == match.Groups["url"])
+        {
+            return null;
+        }
+
+        Uri redirect;
+        if (!Uri.TryCreate(match.Groups["url"].Value, UriKind.Absolute, out redirect)
+          && !Uri.TryCreate(baseUri, match.Groups["url"].Value, out redirect))
+        {
+            return null;
+        }
+
+        return redirect.ToString();
     }
 
     #endregion
