@@ -57,12 +57,13 @@ namespace NReadability
       _fallbackEncoding = fallbackEncoding ?? _DefaultFallbackEncoding;
 
       _webClient = new CookieAwareWebClient();
-      _webClient.Headers.Add("Cache-Control", "no-cache");
+      _webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
       _webClient.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml");
-      _webClient.Headers.Add("Pragma", "no-cache");
-      _webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20100101 Firefox/13.0.1");
-      _webClient.Headers.Add("Accept-Encoding", "gzip,deflate");
       _webClient.Headers.Add("Accept-Language", "en-US,en");
+      _webClient.Headers.Add("Accept-Encoding", "gzip,deflate");
+      _webClient.Headers.Add("Cache-Control", "no-cache");
+      _webClient.Headers.Add("Pragma", "no-cache");
+      _webClient.Headers.Add("Referer", "https://www.google.com/"); // may help with certain pay walls
     }
 
     public UrlFetcher()
